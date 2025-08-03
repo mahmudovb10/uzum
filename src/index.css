@@ -1,0 +1,54 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@layer components {
+  html,
+  body,
+  #root {
+    @apply h-full;
+  }
+
+  #root {
+    @apply flex flex-col;
+  }
+
+  main {
+    @apply grow;
+  }
+}
+
+/* .active {
+  color: orangered;
+} */
+
+body {
+  overflow-x: hidden;
+}
+
+.validator,
+.validator-hint {
+  position: relative;
+  left: 37%;
+  top: 15rem;
+}
+
+input:focus,
+input:focus-visible,
+input:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 1px solid inherit !important;
+}
+
+#inputPassword {
+  position: relative;
+  top: 5rem;
+}
+
+a {
+  text-decoration: none;
+}
+
+.indicator {
+  margin-right: 5rem;
+}

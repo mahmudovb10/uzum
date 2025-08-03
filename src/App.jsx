@@ -4,7 +4,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { useGlobalContext } from "./hooks/useGlobalContext";
-import Basket from "./pages/basket";
+import Basket from "./pages/Basket";
 
 import MainLayout from "./layouts/MainLayout";
 

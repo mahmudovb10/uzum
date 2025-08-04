@@ -52,3 +52,17 @@ a {
 .indicator {
   margin-right: 5rem;
 }
+
+#decreaseBtn {
+  border: 1px solid red;
+  background-color: rgb(255, 204, 204);
+  border-radius: 50%;
+  width: 22px;
+}
+
+#incrementBtn {
+  border: 1px solid blue;
+  background-color: rgb(206, 206, 255);
+  border-radius: 50%;
+  width: 22px;
+}

@@ -31,6 +31,15 @@ const changeState = (state, action) => {
         ),
       };
     case "CHANGE_AMOUNT_PRICE":
+    case "PLUS":
+      return {
+        ...state,
+        products: state.products.map((product) =>
+          product.id === payload
+            ? { ...product, amount: product.amount + 1 }
+            : product
+        ),
+      };
       return {
         ...state,
         totalAmount: payload.amount,

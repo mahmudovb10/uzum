@@ -33,12 +33,6 @@ function Product({ prod }) {
             >
               Add to Card
             </button>
-            {/* <button
-              className="btn btn-outline btn-primary"
-              onClick={handleSubmit} // TEMPORARILY
-            >
-              Buy {prod.price}
-            </button> */}
           </div>
         </div>
       </div>

@@ -1,16 +1,24 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { usefetch } from "../hooks/useFetch";
+import { useContext } from "react";
+import { GlobalContext } from "../context/globalContext";
+import Basket from "./Basket";
+import { Link, NavLink } from "react-router-dom";
 
 function SingleProduct() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { dispatch } = useContext(GlobalContext);
+
   const {
     data: product,
     error,
     isPending,
   } = usefetch("https://dummyjson.com/products/" + id);
+
+  const addToCart = () => {
+    dispatch({ type: "ADD_TO_BASKET", payload: product });
+  };
 
   if (isPending || !product) {
     return (
@@ -53,10 +61,19 @@ function SingleProduct() {
             </div>
 
             <div className="flex gap-4">
-              <button className="btn btn-primary flex-1">Add to Cart</button>
               <button className="btn btn-outline" onClick={() => navigate(-1)}>
                 Go Back
               </button>
+              <button
+                className="btn btn-primary flex-1 "
+                onClick={addToCart}
+                id="buyBtnn"
+              >
+                Add to Card
+              </button>
+              <Link to="/basket">
+                <button className="btn btn-primary">Buy</button>
+              </Link>
             </div>
           </div>
         </div>

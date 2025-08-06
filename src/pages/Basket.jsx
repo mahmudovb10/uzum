@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { GlobalContext } from "../context/globalContext";
 import { useNavigate, Link } from "react-router-dom";
 import { formatPrice } from "../utils";

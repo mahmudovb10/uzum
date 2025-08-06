@@ -3,26 +3,25 @@ import { useState, useEffect } from "react";
 
 export const usefetch = (url) => {
   const [data, setData] = useState(null);
-  const [loading, Ispending] = useState(false);
+  const [loading, setLoading] = useState(false); // <== nomi o‘zgartirildi
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const getData = async () => {
-      Ispending(true);
+      setLoading(true); // <== Ispending -> setLoading
       try {
         const req = await axios(url);
         console.log(req);
-        if (req.status != 200) throw new Error(req.statusText);
-        setData(req.data);
+        setData(req.data); // <== faqat req.data olish kifoya
       } catch (error) {
         console.log(error.message);
-        setError(error.message);
+        setError(error.message); // <== xatolik holatini saqlash
       } finally {
-        Ispending(false);
+        setLoading(false); // <== Ispending(false) -> setLoading(false)
       }
     };
     getData();
   }, [url]);
 
-  return { data, Ispending: loading, error };
+  return { data, loading, error }; // <== loading nomi to‘g‘rilandi
 };

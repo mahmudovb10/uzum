@@ -1,13 +1,17 @@
-import { useReducer, createContext, useEffect, useState } from "react";
+import { useReducer, createContext, useEffect } from "react";
 
 export const GlobalContext = createContext();
 
-const defaultState = {
-  user: true,
-  products: [],
-  totalAmount: 0,
-  totalPrice: 0,
-  likedProducts: [],
+const globalStateFromLocal = () => {
+  return localStorage.getItem("globalState")
+    ? JSON.parse(localStorage.getItem("globalState"))
+    : {
+        user: true,
+        products: [],
+        totalAmount: 0,
+        totalPrice: 0,
+        likedProducts: [],
+      };
 };
 
 const changeState = (state, action) => {
@@ -31,7 +35,10 @@ const changeState = (state, action) => {
       }
 
     case "LOGOUT":
-      return { ...state, user: false };
+      return {
+        ...state,
+        user: false,
+      };
 
     case "DELETE_PRODUCT":
       return {
@@ -48,7 +55,6 @@ const changeState = (state, action) => {
             : product
         ),
       };
-
     case "REMOVE_LIKED_PRODUCT":
       return {
         ...state,
@@ -56,9 +62,8 @@ const changeState = (state, action) => {
           (item) => item.id !== payload
         ),
       };
-
     case "LIKED_PRODUCTS":
-      const isAlreadyLiked = state.likedProducts?.some(
+      const isAlreadyLiked = state.likedProducts.some(
         (item) => item.id === payload.id
       );
       if (isAlreadyLiked) return state;
@@ -92,7 +97,6 @@ const changeState = (state, action) => {
         totalAmount: payload.amount,
         totalPrice: payload.price,
       };
-
     case "ADD_TO_BASKET":
       const existingProduct = state.products.find((p) => p.id === payload.id);
       if (existingProduct) {
@@ -117,22 +121,8 @@ const changeState = (state, action) => {
 };
 
 export function GlobalContextProvider({ children }) {
-  const [initialStateLoaded, setInitialStateLoaded] = useState(false);
-  const [state, dispatch] = useReducer(changeState, defaultState);
+  const [state, dispatch] = useReducer(changeState, globalStateFromLocal());
 
-  // faqat clientda ishlaydi
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const local = localStorage.getItem("globalState");
-      if (local) {
-        const parsed = JSON.parse(local);
-        dispatch({ type: "INIT_STATE", payload: parsed });
-      }
-      setInitialStateLoaded(true);
-    }
-  }, []);
-
-  // auto update total
   useEffect(() => {
     let price = 0;
     let amount = 0;
@@ -145,14 +135,9 @@ export function GlobalContextProvider({ children }) {
     dispatch({ type: "CHANGE_AMOUNT_PRICE", payload: { price, amount } });
   }, [state.products]);
 
-  // save to localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("globalState", JSON.stringify(state));
-    }
+    localStorage.setItem("globalState", JSON.stringify(state));
   }, [state]);
-
-  if (!initialStateLoaded) return null; // yoki loading spinner
 
   return (
     <GlobalContext.Provider value={{ ...state, dispatch }}>

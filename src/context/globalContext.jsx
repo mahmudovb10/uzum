@@ -1,24 +1,23 @@
-import { useReducer, createContext, useEffect } from "react";
+import { useReducer, createContext, useEffect, useState } from "react";
 
 export const GlobalContext = createContext();
 
-const globalStateFromLocal = () => {
-  return localStorage.getItem("globalState")
-    ? JSON.parse(localStorage.getItem("globalState"))
-    : {
-        user: true,
-        products: [],
-        totalAmount: 0,
-        totalPrice: 0,
-        likedProducts: [],
-      };
+const defaultState = {
+  user: true,
+  products: [],
+  totalAmount: 0,
+  totalPrice: 0,
+  likedProducts: [],
 };
 
 const changeState = (state, action) => {
   const { payload, type } = action;
 
   switch (type) {
-    case "ADD_PRODUCT":
+    case "INIT_STATE":
+      return { ...state, ...payload };
+
+    case "ADD_PRODUCT": {
       const existing = state.products.find((p) => p.id === payload.id);
       if (existing) {
         return {
@@ -33,12 +32,10 @@ const changeState = (state, action) => {
           products: [...state.products, { ...payload, amount: 1 }],
         };
       }
+    }
 
     case "LOGOUT":
-      return {
-        ...state,
-        user: false,
-      };
+      return { ...state, user: false };
 
     case "DELETE_PRODUCT":
       return {
@@ -55,6 +52,7 @@ const changeState = (state, action) => {
             : product
         ),
       };
+
     case "REMOVE_LIKED_PRODUCT":
       return {
         ...state,
@@ -62,8 +60,9 @@ const changeState = (state, action) => {
           (item) => item.id !== payload
         ),
       };
-    case "LIKED_PRODUCTS":
-      const isAlreadyLiked = state.likedProducts.some(
+
+    case "LIKED_PRODUCTS": {
+      const isAlreadyLiked = state.likedProducts.find(
         (item) => item.id === payload.id
       );
       if (isAlreadyLiked) return state;
@@ -72,10 +71,11 @@ const changeState = (state, action) => {
         ...state,
         likedProducts: [...state.likedProducts, payload],
       };
+    }
 
-    case "DECREASE_AMOUNT":
+    case "DECREASE_AMOUNT": {
       const productToDecrease = state.products.find((p) => p.id === payload);
-      if (productToDecrease.amount === 1) {
+      if (productToDecrease?.amount === 1) {
         return {
           ...state,
           products: state.products.filter((product) => product.id !== payload),
@@ -90,6 +90,7 @@ const changeState = (state, action) => {
           ),
         };
       }
+    }
 
     case "CHANGE_AMOUNT_PRICE":
       return {
@@ -97,7 +98,8 @@ const changeState = (state, action) => {
         totalAmount: payload.amount,
         totalPrice: payload.price,
       };
-    case "ADD_TO_BASKET":
+
+    case "ADD_TO_BASKET": {
       const existingProduct = state.products.find((p) => p.id === payload.id);
       if (existingProduct) {
         return {
@@ -114,6 +116,7 @@ const changeState = (state, action) => {
           products: [...state.products, { ...payload, amount: 1 }],
         };
       }
+    }
 
     default:
       return state;
@@ -121,7 +124,23 @@ const changeState = (state, action) => {
 };
 
 export function GlobalContextProvider({ children }) {
-  const [state, dispatch] = useReducer(changeState, globalStateFromLocal());
+  const [initialStateLoaded, setInitialStateLoaded] = useState(false);
+  const [state, dispatch] = useReducer(changeState, defaultState);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedState = localStorage.getItem("globalState");
+      if (savedState) {
+        try {
+          const parsed = JSON.parse(savedState);
+          dispatch({ type: "INIT_STATE", payload: parsed });
+        } catch (e) {
+          console.error("JSON parse error", e);
+        }
+      }
+      setInitialStateLoaded(true);
+    }
+  }, []);
 
   useEffect(() => {
     let price = 0;
@@ -136,8 +155,12 @@ export function GlobalContextProvider({ children }) {
   }, [state.products]);
 
   useEffect(() => {
-    localStorage.setItem("globalState", JSON.stringify(state));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("globalState", JSON.stringify(state));
+    }
   }, [state]);
+
+  if (!initialStateLoaded) return null;
 
   return (
     <GlobalContext.Provider value={{ ...state, dispatch }}>

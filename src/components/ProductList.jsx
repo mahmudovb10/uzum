@@ -2,11 +2,11 @@ import Product from "./Product";
 
 function Products({ products }) {
   return (
-    <>
-      {products.map((prod) => {
-        return <Product key={prod.id} prod={prod} />;
-      })}
-    </>
+    <div className="flex flex-wrap gap-6 justify-center">
+      {products.map((prod) => (
+        <Product key={prod.id} prod={prod} />
+      ))}
+    </div>
   );
 }
 

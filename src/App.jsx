@@ -8,6 +8,7 @@ import SingleProduct from "./pages/SingleProduct";
 import MainLayout from "./layouts/MainLayout";
 import { useGlobalContext } from "./hooks/useGlobalContext";
 import { ProtectedRoutes } from "./components/ProtectedRoutes";
+import LikedProducts from "./pages/LikedProducts";
 
 import {
   createBrowserRouter,
@@ -31,7 +32,8 @@ function App() {
         { path: "/about", element: <About /> },
         { path: "/contact", element: <Contact /> },
         { path: "/basket", element: <Basket /> },
-        { path: "/singleProduct/:id", element: <SingleProduct /> }, // <- SingleProduct route
+        { path: "/singleProduct/:id", element: <SingleProduct /> },
+        { path: "likedProducts", element: <LikedProducts /> },
       ],
     },
     {

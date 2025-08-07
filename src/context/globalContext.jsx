@@ -10,6 +10,7 @@ const globalStateFromLocal = () => {
         products: [],
         totalAmount: 0,
         totalPrice: 0,
+        likedProducts: [],
       };
 };
 
@@ -47,6 +48,23 @@ const changeState = (state, action) => {
             ? { ...product, amount: product.amount + 1 }
             : product
         ),
+      };
+    case "REMOVE_LIKED_PRODUCT":
+      return {
+        ...state,
+        likedProducts: state.likedProducts.filter(
+          (item) => item.id !== payload
+        ),
+      };
+    case "LIKED_PRODUCTS":
+      const isAlreadyLiked = state.likedProducts.some(
+        (item) => item.id === payload.id
+      );
+      if (isAlreadyLiked) return state;
+
+      return {
+        ...state,
+        likedProducts: [...state.likedProducts, payload],
       };
 
     case "DECREASE_AMOUNT":

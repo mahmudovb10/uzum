@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { GlobalContext } from "../context/globalContext";
 import { useTheme } from "../hooks/useTheme";
+import { FaRegHeart } from "react-icons/fa";
 
 function Navbar() {
   const { totalAmount } = useContext(GlobalContext);
@@ -31,6 +32,11 @@ function Navbar() {
         </div>
 
         <div className="navbar-end gap-4">
+          <NavLink to="/likedProducts">
+            <button>
+              <FaRegHeart />
+            </button>
+          </NavLink>
           <NavLink to="/basket">
             <div className="indicator">
               {totalAmount > 0 && (

@@ -6,7 +6,7 @@ const globalStateFromLocal = () => {
   return localStorage.getItem("globalState")
     ? JSON.parse(localStorage.getItem("globalState"))
     : {
-        user: true,
+        user: false,
         products: [],
         totalAmount: 0,
         totalPrice: 0,
@@ -33,6 +33,12 @@ const changeState = (state, action) => {
           products: [...state.products, { ...payload, amount: 1 }],
         };
       }
+
+    case "LOGOUT":
+      return {
+        ...state,
+        user: false,
+      };
 
     case "DELETE_PRODUCT":
       return {
